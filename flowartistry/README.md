@@ -2,6 +2,8 @@
 
 First, run the development server:
 
+- cd into dir flowartistry
+
 ```bash
 npm run dev
 # or
