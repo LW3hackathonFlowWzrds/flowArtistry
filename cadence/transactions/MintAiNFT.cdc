@@ -1,17 +1,27 @@
-// The transactions file contains the instructions for what the deployed contract should do
-
-
 import NonFungibleToken from 0xf8d6e0586b0a20c7
+// testnet: 0x631e88ae7f1d7c20
 import AiNFT from 0xf8d6e0586b0a20c7
+// testnet: 0xfb5d002cb67b4ee3
 
+transaction(name: String, ipfsLink: String) {
+    let recipient: Address
 
-transaction(image: String, name: String) {
     prepare(signer: AuthAccount) {
-        let recipientCollection = signer.borrow<&AiNFT.Collection>(from: /storage/AiNFTCollection)
-            ?? panic("Could not borrow recipient's collection reference")
+        // Assuming that the sender wants to mint the NFT for themselves
+        self.recipient = signer.address
 
-        let nft <- AiNFT.mintNFT(image: image, name: name)
-        recipientCollection.deposit(token: <-nft)
+        // Set up a collection for the sender if they don't have one
+        if !signer.getCapability<&{NonFungibleToken.CollectionPublic}>(AiNFT.CollectionPublicPath).check() {
+            signer.save(<-AiNFT.createEmptyCollection(), to: AiNFT.CollectionStoragePath)
+            signer.link<&{NonFungibleToken.CollectionPublic}>(AiNFT.CollectionPublicPath, target: AiNFT.CollectionStoragePath)
+        }
+    }
+
+    execute {
+        AiNFT.mintNFT(
+            recipientAddress: self.recipient,
+            name: name,
+            ipfsLink: ipfsLink
+        )
     }
 }
-
