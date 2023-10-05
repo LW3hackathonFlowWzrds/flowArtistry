@@ -1,24 +1,33 @@
 import React from "react";
-import {Card, CardHeader, CardFooter, Image, CardBody} from "@nextui-org/react";
+import {Card, CardHeader, CardFooter, Image, CardBody, Button, Link} from "@nextui-org/react";
 
 export default function NFTCard({imageSrc, title, linkToMetadata, id }) {
   return (
-    <div className="max-w-[900px] gap-2 grid grid-cols-12 grid-rows-2 px-8 border-black" key={id}>
-    <Card isFooterBlurred className="w-[400px] h-[400px] col-span-12 sm:col-span-5 radius-md bg-gold-200">
+    <div className="max-w-[900px] max-h-[750px]	  border-black" key={id}>
+    <Card isFooterBlurred className="w-[600px] col-span-12 sm:col-span-5 radius-sm bg-gold-200">
       <CardHeader className="absolute z-10 top-1 flex-col items-center">
-        <p className="text-lg text-black uppercase font-bold">{title}</p>
+        <p className="text-3xl text-black uppercase font-bold font-mono">{title}</p>
       </CardHeader>
-      <CardBody className="p-3">
+      <CardBody>
         <Image
         removeWrapper
-        alt="NFT AI Image"
+        alt={title}
         className="z-0 w-full h-full scale-125 -translate-y-6 object-cover"
         src={imageSrc}
         />
       </CardBody>
-      <CardFooter className="absolute pb-4 bottom-0 border-t-1 border-zinc-100/50 z-10 justify-center bg-black">
+      <CardFooter className="absolute pb-4 bottom-0 border-zinc-100/50 z-10 justify-center bg-black">
         <div>
-          <p className="text-white text-md">Metadata: {linkToMetadata}</p>
+          <Button 
+            color="warning"
+            radius='full'
+            href={linkToMetadata}
+            as="a"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="max-w-md text-lg text-black shadow-lg">
+            View Metadata
+          </Button>
         </div>
       </CardFooter>
     </Card>

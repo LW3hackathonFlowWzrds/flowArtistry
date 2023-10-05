@@ -1,5 +1,4 @@
 "use client";
-// maybe rename this App.js?
 
 import * as fcl from "@onflow/fcl";
 import * as t from "@onflow/types";
@@ -7,14 +6,11 @@ import { useState } from "react";
 import { Input, Textarea, Button, Spinner } from "@nextui-org/react";
 import axios from "axios";
 import { NFTStorage, File } from "nft.storage";
-// import Spinner from "react-bootstrap/Spinner";
 import "../../flow/config";
 import { MintAiNFT } from "../../flow/cadence/transactions/MintAiNFT.js";
 import NFTCard from "../components/NFTCard";
-// import useUser from "./components/useUser.js";
 
 export default function Page() {
-  // const user = useUser();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState(null);
@@ -23,16 +19,9 @@ export default function Page() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
 
+ 
   const handlePrompt = async () => {
-    // e.preventDefault();
-
-    // if (name === "" || description === "") {
-    //   window.alert("Please provide a name and description");
-    //   return;
-    // }
-
     setIsLoading(true);
-    // Call AI API to generate an image based on description
     try {
       setLoadingMessage("Generating Image...");
       const imgData = await createImage(description);
@@ -58,11 +47,12 @@ export default function Page() {
 
   const createImage = async (description) => {
     const URL = `https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2`;
+    const secretKey = process.env.NEXT_PUBLIC_HUGGING_FACE_API_KEY;
     const response = await axios({
       url: URL,
       method: "POST",
       headers: {
-        Authorization: `Bearer ${process.env.REACT_APP_HUGGING_FACE_API_KEY}`,
+        Authorization: `Bearer ${secretKey}`,
         Accept: "application/json",
         "Content-Type": "application/json",
       },
@@ -82,8 +72,9 @@ export default function Page() {
   };
 
   const uploadImage = async (ipfsLink) => {
+    const secretKey = process.env.NEXT_PUBLIC_NFT_STORAGE_API_KEY;
     const nftstorage = new NFTStorage({
-      token: process.env.REACT_APP_NFT_STORAGE_API_KEY,
+      token: secretKey,
     });
 
     const { ipnft } = await nftstorage.store({
@@ -115,10 +106,11 @@ export default function Page() {
   };
 
   return (
-    <section class="backdrop-blur-md min-h-screen">
+    <section className="backdrop-blur-md min-h-screen">
       <div className="flex flex-col gap-8 justify-center items-center p-14 border-4 w-3/5 mx-auto min-h-screen rounded-3xl border-gold-300 bg-gold-500 bg-opacity-30">
         <p className="text-white font-extrabold text-2xl font-mono">
-          {!isLoading && "Generate your NFT to mint"}
+          {(isLoading || image) ? " " :  "Generate your NFT to mint"}
+          {image && "Your AI generated NFT!"}
         </p>
 
         { isLoading ?
@@ -151,6 +143,7 @@ export default function Page() {
                       radius='full'
                       fullWidth
                       onClick={() => handlePrompt()}
+                      isDisabled={!name || !description}
                       className="max-w-md text-lg bg-gradient-to-tr from-pink-500 to-yellow-500 text-white shadow-lg">
                       Mint
                     </Button>
@@ -162,56 +155,3 @@ export default function Page() {
     </section>
   );
 }
-
-
-
-
-
-      {/* <div>
-        <form onSubmit={handlePrompt}>
-          <Input
-            size="lg"
-            type="text"
-            placeholder="Create a name..."
-            labelPlacement="inside-left"
-            className="max-w-md text-lg"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <Input
-            labelPlacement="inside-left"
-            className="max-w-md text-lg"
-            type="text"
-            placeholder="Create a description..."
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-          <Input
-            color="warning"
-            variant="bordered"
-            radius="full"
-            fullWidth
-            className="max-w-md text-lg bg-gradient-to-tr from-pink-500 to-yellow-500 text-white shadow-lg"
-            type="submit"
-            value="Create & Mint"
-          />
-        </form>
-      </div> */}
-
-
-      {/* {isWaiting ? (
-        <div className="image__placeholder">
-          <Spinner animation="border" />
-          <p>{message}</p>
-        </div>
-      ) : image && url ? (
-        <div>
-          <img src={image} alt="AI generated image" />
-          <p>
-            View{" "}
-            <a href={url} target="_blank" rel="noreferrer">
-              Metadata
-            </a>
-          </p>
-        </div>
-      ) : null} */}

@@ -11,3 +11,5 @@ outerspace.pkey
 /.DS_Store
 
 .env
+
+.env.local
