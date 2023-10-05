@@ -3,10 +3,12 @@
 import React, {useState, useEffect} from "react";
 import {Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Image, Button} from "@nextui-org/react";
 import * as fcl from '@onflow/fcl';
+import { useRouter } from "next/navigation";
 import '/flow/config.js';
 
 export default function NavBar() {
   const [user, setUser] = useState({ loggedIn: false });
+  const router = useRouter();
 
   useEffect(() => {
 		fcl.currentUser.subscribe(setUser);
@@ -15,8 +17,10 @@ export default function NavBar() {
 	function handleAuthentication() {
 		if (user.loggedIn) {
 			fcl.unauthenticate();
+      router.push("/");
 		} else {
 			fcl.authenticate();
+
 		}
 	}
 
@@ -31,20 +35,20 @@ export default function NavBar() {
             />
       </NavbarBrand>
 
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+      {/* <NavbarContent className="hidden sm:flex gap-4" justify="center"> */}
 
-        <NavbarItem>
+        {/* <NavbarItem>
           <Link color="foreground" href="/dashboard">
             Dashboard
           </Link>
-        </NavbarItem>
-        <NavbarItem>
+        </NavbarItem> */}
+        {/* <NavbarItem>
           <Link color="foreground" href="/dashboard/NFTs">
             NFTs
           </Link>
-        </NavbarItem>
+        </NavbarItem> */}
 
-      </NavbarContent>
+      {/* </NavbarContent> */}
 
       <NavbarContent justify="end">
         <NavbarItem className="hidden lg:flex">
