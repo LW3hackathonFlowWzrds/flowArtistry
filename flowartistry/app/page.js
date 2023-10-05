@@ -4,7 +4,7 @@
 import React, { useEffect } from "react";
 import { Button } from "@nextui-org/button";
 import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { Image } from "@nextui-org/react";
 import * as fcl from "@onflow/fcl";
 import "../flow/config.js";
