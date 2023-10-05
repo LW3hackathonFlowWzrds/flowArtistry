@@ -129,11 +129,13 @@ export default function Page() {
                   <Input 
                       size='lg' 
                       type="text" 
-                      label="NFT Title" 
+                      label="NFT Name" 
                       labelPlacement="inside-left"
+                      placeholder="Name of your NFT"
                       className="max-w-md text-lg"
                       onChange= {(e) => setName(e.target.value)}
                       isRequired
+                      fullWidth
                       />
                     <Textarea
                       isRequired

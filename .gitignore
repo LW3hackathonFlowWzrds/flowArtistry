@@ -9,3 +9,5 @@ flow.json
 outerspace.pkey
 
 /.DS_Store
+
+.env
