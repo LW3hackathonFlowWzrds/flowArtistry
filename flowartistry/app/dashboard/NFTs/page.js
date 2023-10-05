@@ -18,10 +18,10 @@ export default function Page() {
   }
 
     return (
-      <div class='backdrop-blur-md min-h-screen'>
-       <h1 class="text-center p-10 text-3xl">My NFTs!</h1>
+      <div className='backdrop-blur-md min-h-screen'>
+       <h1 className="text-center p-10 text-3xl">My NFTs!</h1>
 
-        <div class="flex flex-row gap-3">
+        <div className="flex flex-row gap-3">
            {nfts?.length && nfts.maps((nft) => (
             <NFTCard 
               key={nft.id}

@@ -37,9 +37,23 @@ export default function Home() {
           <p className="text-2xl text-white font-mono">
           Create your own art & unique NFT using AI.
           </p>
-          {/* How to use: 1. Connect Flow wallet. 
-          2. Enter a name for your NFT and a description for the AI image generator. The more specific the description, the better the image. 
-          3. Click ‘Mint’ to generate the image and mint the NFT to your wallet. The NFT will be displayed after mint. */}
+
+          <div className="w-[500px] mx-auto pt-2 mt-4 border rounded border-black bg-gold-500 opacity-80">
+              <h2 className="mb-2 text-xl font-semibold font-serif text-black">How to:</h2>
+              <ul className="space-y-3 text-left pb-4 pl-3 pr-3 text-black font-mono font-semibold">
+                  <li className="flex items-center space-x-3 ">
+                      <span>1. Connect Flow wallet.</span>
+                  </li>
+                  <li className="flex items-center space-x-3">
+                      <span>2. Enter a name for your NFT and a description for the AI image generator.</span>       
+                  </li>
+                  <li className="flex items-center space-x-3">
+                      <span>3. Click ‘Mint’ to generate the image and mint the NFT to your wallet.</span>
+                  </li>
+              </ul>
+
+          </div>
+
         </CardBody>
 
         <CardFooter className="flex gap-3 justify-center">

@@ -5,7 +5,7 @@ export default function DashboardLayout({
     children, 
   }) {
     return (
-      <section class='bg-hero min-h-screen'>
+      <section className='bg-hero min-h-screen'>
         <NavBar/>
         {children}
       </section>
