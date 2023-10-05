@@ -24,9 +24,9 @@ export default function Home() {
     fcl.authenticate();
   };
 
-  const logOut = () => {
-    fcl.unauthenticate();
-  };
+  // const logOut = () => {
+  //   fcl.unauthenticate();
+  // };
 
   return (
     <main className="min-h-screen p-14 backdrop-blur-sm flex items-center justify-center">
@@ -50,12 +50,12 @@ export default function Home() {
           >
             Connect Wallet
           </Button>
-          <Button
+          {/* <Button
             className="bg-black text-gold-500 w-52 h-14 text-xl"
             onClick={() => logOut()}
           >
             Disconnect Wallet
-          </Button>
+          </Button> */}
         </CardFooter>
       </Card>
     </main>
