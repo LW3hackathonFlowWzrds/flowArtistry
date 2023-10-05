@@ -1,8 +1,6 @@
+import NonFungibleToken from 0x631e88ae7f1d7c20
+import AiNFT from 0xfb5d002cb67b4ee3
 
-import NonFungibleToken from 0xf8d6e0586b0a20c7
-// testnet: 0x631e88ae7f1d7c20
-import AiNFT from 0xf8d6e0586b0a20c7
-// testnet: 0xfb5d002cb67b4ee3
 transaction(name: String, ipfsLink: String) {
     let recipient: Address
 
