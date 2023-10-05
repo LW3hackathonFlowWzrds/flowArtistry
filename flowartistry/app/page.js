@@ -42,13 +42,13 @@ export default function Home() {
               <h2 className="mb-2 text-xl font-semibold font-serif text-black">How to:</h2>
               <ul className="space-y-3 text-left pb-4 pl-3 pr-3 text-black font-mono font-semibold">
                   <li className="flex items-center space-x-3 ">
-                      <span>1. Connect Flow wallet.</span>
+                      <span>1. Connect Flow wallet</span>
                   </li>
                   <li className="flex items-center space-x-3">
-                      <span>2. Enter a name for your NFT and a description for the AI image generator.</span>       
+                      <span>2. Enter a name for your NFT and a description for the AI image generator</span>       
                   </li>
                   <li className="flex items-center space-x-3">
-                      <span>3. Click ‘Mint’ to generate the image and mint the NFT to your wallet.</span>
+                      <span>3. Click ‘Mint’ to generate the image and mint the NFT to your wallet</span>
                   </li>
               </ul>
 
