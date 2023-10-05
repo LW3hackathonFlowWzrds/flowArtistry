@@ -4,52 +4,56 @@
 import * as fcl from "@onflow/fcl";
 import * as t from "@onflow/types";
 import { useState } from "react";
-import { Input } from "@nextui-org/react";
+import { Input, Textarea, Button, Spinner } from "@nextui-org/react";
 import axios from "axios";
 import { NFTStorage, File } from "nft.storage";
-import Spinner from "react-bootstrap/Spinner";
+// import Spinner from "react-bootstrap/Spinner";
 import "../../flow/config";
-import { MintAiNFT } from "../../flow/cadence/transactions/MintAiNFT";
-import useUser from "./components/useUser.js";
+import { MintAiNFT } from "../../flow/cadence/transactions/MintAiNFT.js";
+import NFTCard from "../components/NFTCard";
+// import useUser from "./components/useUser.js";
 
 export default function Page() {
-  const user = useUser();
+  // const user = useUser();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState(null);
   const [url, setURL] = useState(null);
-  const [message, setMessage] = useState("");
-  const [isWaiting, setIsWaiting] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
 
-  const handlePrompt = async (e) => {
-    e.preventDefault();
+  const handlePrompt = async () => {
+    // e.preventDefault();
 
-    if (name === "" || description === "") {
-      window.alert("Please provide a name and description");
-      return;
-    }
+    // if (name === "" || description === "") {
+    //   window.alert("Please provide a name and description");
+    //   return;
+    // }
 
-    setIsWaiting(true);
+    setIsLoading(true);
     // Call AI API to generate an image based on description
     try {
-      setMessage("Generating Image...");
+      setLoadingMessage("Generating Image...");
       const imgData = await createImage(description);
       setImage(imgData);
 
-      setMessage("Uploading Image to IPFS...");
+      setLoadingMessage("Uploading Image to IPFS...");
       const url = await uploadImage(imgData);
       setURL(url);
 
-      setMessage("Minting NFT...");
+      setLoadingMessage("Minting NFT...");
       await mintNFT(url, name);
 
-      setMessage("NFT Minted!");
+      setLoadingMessage("NFT Minted!");
     } catch (error) {
       console.error("Error:", error);
-      setMessage("Error while creating and minting NFT.");
+      setError(true);
+      setLoadingMessage("Error while creating and minting NFT.");
     }
 
-    setIsWaiting(false);
+    setIsLoading(false);
+    setError(false);
   };
 
   const createImage = async (description) => {
@@ -112,17 +116,56 @@ export default function Page() {
 
   return (
     <section class="backdrop-blur-md min-h-screen">
-      {user && user.addr ? <h1>{user.addr}</h1> : null}
-
-      {/* <div className='flex h-min-80 items-center justify-center'> */}
-
-      {/* <div className="flex flex-col gap-4 max-w-lg bg-gold-200 p-2"> */}
       <div className="flex flex-col gap-8 justify-center items-center p-14 border-4 w-3/5 mx-auto min-h-screen rounded-3xl border-gold-300 bg-gold-500 bg-opacity-30">
         <p className="text-white font-extrabold text-2xl font-mono">
-          Generate your NFT to mint
-        </p>{" "}
+          {!isLoading && "Generate your NFT to mint"}
+        </p>
+
+        { isLoading ?
+          (<Spinner label={loadingMessage} size="lg" color={error ? "danger" : "success"} labelColor={error ? "danger" : "success"}/>) :
+            image && url ?
+              (<NFTCard imageSrc={image} title={name} linkToMetadata={url} id={url}/>) : (
+                <>
+                  <Input 
+                      size='lg' 
+                      type="text" 
+                      label="NFT Title" 
+                      labelPlacement="inside-left"
+                      className="max-w-md text-lg"
+                      onChange= {(e) => setName(e.target.value)}
+                      isRequired
+                      />
+                    <Textarea
+                      isRequired
+                      label="AI prompt"
+                      labelPlacement="inside-left"
+                      placeholder="Enter your prompt"
+                      className="max-w-md text-lg"
+                      onChange= {(e) => setDescription(e.target.value)}
+                    />
+                    <Button 
+                      color="warning"
+                      variant="bordered" 
+                      radius='full'
+                      fullWidth
+                      onClick={() => handlePrompt()}
+                      className="max-w-md text-lg bg-gradient-to-tr from-pink-500 to-yellow-500 text-white shadow-lg">
+                      Mint
+                    </Button>
+                </>
+              )
+        }     
       </div>
-      <div>
+
+    </section>
+  );
+}
+
+
+
+
+
+      {/* <div>
         <form onSubmit={handlePrompt}>
           <Input
             size="lg"
@@ -151,8 +194,10 @@ export default function Page() {
             value="Create & Mint"
           />
         </form>
-      </div>
-      {isWaiting ? (
+      </div> */}
+
+
+      {/* {isWaiting ? (
         <div className="image__placeholder">
           <Spinner animation="border" />
           <p>{message}</p>
@@ -167,7 +212,4 @@ export default function Page() {
             </a>
           </p>
         </div>
-      ) : null}
-    </section>
-  );
-}
+      ) : null} */}

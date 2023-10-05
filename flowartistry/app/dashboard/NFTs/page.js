@@ -25,9 +25,9 @@ export default function Page() {
            {nfts?.length && nfts.maps((nft) => (
             <NFTCard 
               key={nft.id}
-              imageSrc={nft.imageSrc}
+              imageSrc={nft.image}
               title={nft.title}
-              description={nft.description} 
+              linkToMetadata={nft.url} 
             />
             ))} 
 
@@ -36,19 +36,19 @@ export default function Page() {
           key={"nft.id"}
           imageSrc={"nft.imageSrc"}
           title={"nft.title"}
-          description={"nft.description sdffs sdfsf"} 
+          linkToMetadata={"nft.description sdffs sdfsf"} 
         />
          <NFTCard 
           key={"nft.id2"}
           imageSrc={"nft.imageSr2c"}
           title={"nft.titl2e"}
-          description={"nft.descript2ion ervcsdcs "} 
+          linkToMetadata={"nft.descript2ion ervcsdcs "} 
         />
           <NFTCard 
           key={"nft.id23"}
           imageSrc={"nft.imageSr23c"}
           title={"nft.titl32e"}
-          description={"nft.descri3pt2ion ewewewew rvtdvdvs "} 
+          linkToMetadata={"nft.descri3pt2ion ewewewew rvtdvdvs "} 
         />
 
         </div>
