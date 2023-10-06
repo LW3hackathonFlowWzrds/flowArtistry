@@ -19,7 +19,6 @@ export default function Page() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
 
- 
   const handlePrompt = async () => {
     setIsLoading(true);
     try {
@@ -32,7 +31,7 @@ export default function Page() {
       setURL(url);
 
       setLoadingMessage("Minting NFT...");
-      await mintNFT(url, name);
+      await mintNFT(name, ipfsLink);
 
       setLoadingMessage("NFT Minted!");
     } catch (error) {
@@ -71,20 +70,20 @@ export default function Page() {
     return img;
   };
 
-  const uploadImage = async (ipfsLink) => {
+  const uploadImage = async (imgData) => {
     const secretKey = process.env.NEXT_PUBLIC_NFT_STORAGE_API_KEY;
     const nftstorage = new NFTStorage({
       token: secretKey,
     });
 
     const { ipnft } = await nftstorage.store({
-      image: new File([ipfsLink], "image.jpeg", { type: "image/jpeg" }),
+      image: new File([imgData], "image.jpeg", { type: "image/jpeg" }),
       name: name,
       description: description,
     });
 
-    const url = `https://ipfs.io/ipfs/${ipnft}/metadata.json`;
-    return url;
+    const ipfsLink = `https://ipfs.io/ipfs/${ipnft}/metadata.json`;
+    return ipfsLink;
   };
 
   const mintNFT = async (name, ipfsLink) => {
@@ -109,49 +108,59 @@ export default function Page() {
     <section className="backdrop-blur-md min-h-screen">
       <div className="flex flex-col gap-8 justify-center items-center p-14 border-4 w-3/5 mx-auto min-h-screen rounded-3xl border-gold-300 bg-gold-500 bg-opacity-30">
         <p className="text-white font-extrabold text-2xl font-mono">
-          {(isLoading || image) ? " " :  "Generate your NFT to mint"}
+          {isLoading || image ? " " : "Generate your NFT to mint"}
           {image && "Your AI generated NFT!"}
         </p>
 
-        { isLoading ?
-          (<Spinner label={loadingMessage} size="lg" color={error ? "danger" : "success"} labelColor={error ? "danger" : "success"}/>) :
-            image && url ?
-              (<NFTCard imageSrc={image} title={name} linkToMetadata={url} id={url}/>) : (
-                <>
-                  <Input 
-                      size='lg' 
-                      type="text" 
-                      label="NFT Name" 
-                      labelPlacement="inside-left"
-                      placeholder="Name of your NFT"
-                      className="max-w-md text-lg"
-                      onChange= {(e) => setName(e.target.value)}
-                      isRequired
-                      fullWidth
-                      />
-                    <Textarea
-                      isRequired
-                      label="AI prompt"
-                      labelPlacement="inside-left"
-                      placeholder="Enter your prompt"
-                      className="max-w-md text-lg"
-                      onChange= {(e) => setDescription(e.target.value)}
-                    />
-                    <Button 
-                      color="warning"
-                      variant="bordered" 
-                      radius='full'
-                      fullWidth
-                      onClick={() => handlePrompt()}
-                      isDisabled={!name || !description}
-                      className="max-w-md text-lg bg-gradient-to-tr from-pink-500 to-yellow-500 text-white shadow-lg">
-                      Mint
-                    </Button>
-                </>
-              )
-        }     
+        {isLoading ? (
+          <Spinner
+            label={loadingMessage}
+            size="lg"
+            color={error ? "danger" : "success"}
+            labelColor={error ? "danger" : "success"}
+          />
+        ) : image && url ? (
+          <NFTCard
+            imageSrc={image}
+            title={name}
+            linkToMetadata={url}
+            id={url}
+          />
+        ) : (
+          <>
+            <Input
+              size="lg"
+              type="text"
+              label="NFT Name"
+              labelPlacement="inside-left"
+              placeholder="Name of your NFT"
+              className="max-w-md text-lg"
+              onChange={(e) => setName(e.target.value)}
+              isRequired
+              fullWidth
+            />
+            <Textarea
+              isRequired
+              label="AI prompt"
+              labelPlacement="inside-left"
+              placeholder="Enter your prompt"
+              className="max-w-md text-lg"
+              onChange={(e) => setDescription(e.target.value)}
+            />
+            <Button
+              color="warning"
+              variant="bordered"
+              radius="full"
+              fullWidth
+              onClick={() => handlePrompt()}
+              isDisabled={!name || !description}
+              className="max-w-md text-lg bg-gradient-to-tr from-pink-500 to-yellow-500 text-white shadow-lg"
+            >
+              Mint
+            </Button>
+          </>
+        )}
       </div>
-
     </section>
   );
 }
