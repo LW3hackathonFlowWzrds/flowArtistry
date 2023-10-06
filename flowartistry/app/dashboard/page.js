@@ -7,7 +7,7 @@ import { Input, Textarea, Button, Spinner } from "@nextui-org/react";
 import axios from "axios";
 import { NFTStorage, File } from "nft.storage";
 import "../../flow/config";
-import { MintAiNFT } from "../../flow/cadence/transactions/MintAiNFT.js";
+// import { MintAiNFT } from "../../flow/cadence/transactions/MintAiNFT.js";
 import NFTCard from "../components/NFTCard";
 
 export default function Page() {
@@ -30,10 +30,9 @@ export default function Page() {
       const url = await uploadImage(imgData);
       setURL(url);
 
-      setLoadingMessage("Minting NFT...");
-      await mintNFT(name, ipfsLink);
-
-      setLoadingMessage("NFT Minted!");
+      // setLoadingMessage("Minting NFT...");
+      // await mintNFT(name, ipfsLink);
+      // setLoadingMessage("NFT Minted!");
     } catch (error) {
       console.error("Error:", error);
       setError(true);
@@ -86,23 +85,68 @@ export default function Page() {
     return ipfsLink;
   };
 
-  const mintNFT = async (name, ipfsLink) => {
-    try {
-      const transactionId = await fcl
-        .send([
-          fcl.transaction(MintAiNFT),
-          fcl.args([fcl.arg(ipfsLink, t.String), fcl.arg(name, t.String)]),
-          fcl.proposer(fcl.authz),
-          fcl.authorizations([fcl.authz]),
-          fcl.limit(9999),
-        ])
-        .then(fcl.decode);
+  // const mintNFT = async (name, ipfsLink) => {
+  //   try {
+  //     const transactionId = await fcl
+  //       .send([
+  //         fcl.transaction(MintAiNFT),
+  //         fcl.args([fcl.arg(ipfsLink, t.String), fcl.arg(name, t.String)]),
+  //         fcl.proposer(fcl.authz),
+  //         fcl.authorizations([fcl.authz]),
+  //         fcl.limit(9999),
+  //       ])
+  //       .then(fcl.decode);
 
-      console.log("NFT Mint Transaction ID:", transactionId);
+  //     console.log("NFT Mint Transaction ID:", transactionId);
+  //   } catch (error) {
+  //     console.error("Minting error:", error);
+  //   }
+  // };
+
+
+  const mintNFT = async (type, url) => {
+    try {
+      const res = await fcl.mutate({
+        cadence: 
+        `
+        import AiNFT from 0x826632152cab7bdc
+        import NonFungibleToken from 0x631e88ae7f1d7c20
+        import MetadataViews from 0x631e88ae7f1d7c20
+
+        transaction(type: String, url: String){
+            let recipientCollection: &AiNFT.Collection{NonFungibleToken.CollectionPublic}
+
+            prepare(signer: AuthAccount){
+                
+            if signer.borrow<&AiNFT.Collection>(from: AiNFT.CollectionStoragePath) == nil {
+            signer.save(<- AiNFT.createEmptyCollection(), to: AiNFT.CollectionStoragePath)
+            signer.link<&AiNFT.Collection{NonFungibleToken.CollectionPublic, MetadataViews.ResolverCollection}>(AiNFT.CollectionPublicPath, target: AiNFT.CollectionStoragePath)
+            }
+
+            self.recipientCollection = signer.getCapability(AiNFT.CollectionPublicPath)
+                                        .borrow<&AiNFT.Collection{NonFungibleToken.CollectionPublic}>()!
+            }
+            execute{
+                AiNFT.mintNFT(recipient: self.recipientCollection, type: type, url: url)
+            }
+        }
+        `
+        ,
+        args: (arg, t) => [arg(type, t.String), arg(url, t.String)],
+        limit: 9999,
+      });
+      fcl.tx(res).subscribe((res) => {
+        if (res.status === 4 && res.errorMessage === "") {
+            window.alert("NFT Minted!")
+            window.location.reload(false);
+        }
+      });
+
+      console.log("txid", res);
     } catch (error) {
-      console.error("Minting error:", error);
+      console.log("err", error);
     }
-  };
+  }
 
   return (
     <section className="backdrop-blur-md min-h-screen">
@@ -120,12 +164,26 @@ export default function Page() {
             labelColor={error ? "danger" : "success"}
           />
         ) : image && url ? (
-          <NFTCard
-            imageSrc={image}
-            title={name}
-            linkToMetadata={url}
-            id={url}
-          />
+          <>
+            <NFTCard
+              imageSrc={image}
+              title={name}
+              linkToMetadata={url}
+              id={url}
+            />
+            <Button
+              color="warning"
+              variant="bordered"
+              radius="full"
+              fullWidth
+              onClick={() => mintNFT(name, url)}
+              // isDisabled={!name || !description}
+              className="max-w-md text-lg bg-gradient-to-tr from-pink-500 to-yellow-500 text-white shadow-lg"
+            >
+              Mint
+            </Button>
+          </>
+          
         ) : (
           <>
             <Input
