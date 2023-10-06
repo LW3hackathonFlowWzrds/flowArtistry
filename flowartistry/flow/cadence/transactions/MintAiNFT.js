@@ -1,27 +1,22 @@
-export const MintAiNFT = `
+export const MintAiNFT = 
+`import AiNFT from 0x9c050c63af57457f
 import NonFungibleToken from 0x631e88ae7f1d7c20
-import AiNFT from 0xfb5d002cb67b4ee3
-transaction(name: String, ipfsLink: String) {
-    let recipient: Address
+import MetadataViews from 0x631e88ae7f1d7c20
 
-    prepare(signer: AuthAccount) {
-        // Assuming that the sender wants to mint the NFT for themselves
-        self.recipient = signer.address
+transaction(type: String, url: String){
+    let recipientCollection: &AiNFT.Collection{NonFungibleToken.CollectionPublic}
 
-        // Set up a collection for the sender if they don't have one
-        if !signer.getCapability<&{NonFungibleToken.CollectionPublic}>(AiNFT.CollectionPublicPath).check() {
-            signer.save(<-AiNFT.createEmptyCollection(), to: AiNFT.CollectionStoragePath)
-            signer.link<&{NonFungibleToken.CollectionPublic}>(AiNFT.CollectionPublicPath, target: AiNFT.CollectionStoragePath)
-        }
+    prepare(signer: AuthAccount){
+        
+    if signer.borrow<&AiNFT.Collection>(from: AiNFT.CollectionStoragePath) == nil {
+    signer.save(<- AiNFT.createEmptyCollection(), to: AiNFT.CollectionStoragePath)
+    signer.link<&AiNFT.Collection{NonFungibleToken.CollectionPublic, MetadataViews.ResolverCollection}>(AiNFT.CollectionPublicPath, target: AiNFT.CollectionStoragePath)
     }
 
-    execute {
-        AiNFT.mintNFT(
-            recipientAddress: self.recipient,
-            name: name,
-            ipfsLink: ipfsLink
-        )
+    self.recipientCollection = signer.getCapability(AiNFT.CollectionPublicPath)
+                                .borrow<&AiNFT.Collection{NonFungibleToken.CollectionPublic}>()!
     }
-}
-
-`
+    execute{
+        AiNFT.mintNFT(recipient: self.recipientCollection, type: type, url: url)
+    }
+}`
